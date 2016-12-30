@@ -18,6 +18,7 @@ func (h *refreshHandler) saveAllMovies(movies []dao.Movie) error {
 	for _, mov := range movies {
 		err := h.store.AddMovie(mov)
 		if err != nil {
+			log.Println("caca")
 			return err
 		}
 	}
@@ -56,7 +57,7 @@ func (h *refreshHandler) refreshTorrent(w http.ResponseWriter, r *http.Request) 
 
 func (h *refreshHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	action := r.URL.Query().Get("action")
-	if action == "" && action != "movie" {
+	if action == "" && action != "movie" && action != "torrent" {
 		http.Error(w, "QueryParam action must be set to movie or torrent", http.StatusMethodNotAllowed)
 		return
 	}
@@ -67,9 +68,6 @@ func (h *refreshHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if action == "torrent" {
 		log.Println("Refreshing torrent ...")
 		h.refreshTorrent(w, r)
-	} else {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		return
 	}
 
 }

@@ -60,12 +60,12 @@ func (p Trakt) Collection(slug string) ([]dao.Movie, error) {
 
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("trakt-api-version", "2")
-	req.Header.Add("trakt-api-key", "53d18e80e9c0104d27253918a69a4a9c9e8d47e2c4dbf6aaf98d34d2f1f558a4")
+	req.Header.Add("trakt-api-key", p.APIKey)
 
 	resp, err := client.Do(req)
 
 	if err != nil {
-		fmt.Println("Errored when sending request to the server")
+		log.Println("Errored when sending request to the server")
 		return nil, err
 	}
 
@@ -89,7 +89,7 @@ func (p Trakt) WatchList(slug string, filter string) ([]dao.Movie, error) {
 
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("trakt-api-version", "2")
-	req.Header.Add("trakt-api-key", "53d18e80e9c0104d27253918a69a4a9c9e8d47e2c4dbf6aaf98d34d2f1f558a4")
+	req.Header.Add("trakt-api-key", p.APIKey)
 
 	resp, err := client.Do(req)
 
