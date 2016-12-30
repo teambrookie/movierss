@@ -9,11 +9,9 @@ import (
 	"github.com/teambrookie/movierss/dao"
 )
 
-type Movie dao.Movie
-
 type MovieProvider interface {
-	Collection(slug string) ([]Movie, error)
-	WatchList(slug string, filter string) ([]Movie, error)
+	Collection(slug string) ([]dao.Movie, error)
+	WatchList(slug string, filter string) ([]dao.Movie, error)
 }
 
 type Trakt struct {
@@ -23,19 +21,19 @@ type Trakt struct {
 type trackResponse []struct {
 	Rank  int    `json:"rank"`
 	Type  string `json:"type"`
-	Movie Movie
+	Movie dao.Movie
 }
 
-func respToMovies(r trackResponse) []Movie {
-	var movies []Movie
+func respToMovies(r trackResponse) []dao.Movie {
+	var movies []dao.Movie
 	for _, m := range r {
 		movies = append(movies, m.Movie)
 	}
 	return movies
 }
 
-func diff(watchlist, collection []Movie) []Movie {
-	var rest []Movie
+func diff(watchlist, collection []dao.Movie) []dao.Movie {
+	var rest []dao.Movie
 	isHere := false
 	for _, w := range watchlist {
 		for _, c := range collection {
@@ -53,7 +51,7 @@ func diff(watchlist, collection []Movie) []Movie {
 }
 
 // Collection return the content of your trakt.tv collection
-func (p Trakt) Collection(slug string) ([]Movie, error) {
+func (p Trakt) Collection(slug string) ([]dao.Movie, error) {
 	client := &http.Client{}
 
 	url := fmt.Sprintf("https://api.trakt.tv/users/%s/collection/movies", slug)
@@ -82,7 +80,7 @@ func (p Trakt) Collection(slug string) ([]Movie, error) {
 
 // WatchList return the content of your trakt.tv watchlist
 // filter can be set to notCollected or ""
-func (p Trakt) WatchList(slug string, filter string) ([]Movie, error) {
+func (p Trakt) WatchList(slug string, filter string) ([]dao.Movie, error) {
 	client := &http.Client{}
 
 	url := fmt.Sprintf("https://api.trakt.tv/users/%s/watchlist/movie", slug)
@@ -111,7 +109,7 @@ func (p Trakt) WatchList(slug string, filter string) ([]Movie, error) {
 	watchlist := respToMovies(response)
 
 	if filter == "notCollected" {
-		collection, err := Collection(slug)
+		collection, err := p.Collection(slug)
 		if err != nil {
 			log.Println("Error when querrying for trakt collection")
 			return nil, err
