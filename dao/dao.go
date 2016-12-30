@@ -2,6 +2,7 @@ package dao
 
 import (
 	"encoding/json"
+	"strconv"
 	"time"
 
 	"github.com/boltdb/bolt"
@@ -49,11 +50,11 @@ func (store *BoltMovieStore) CreateBucket(bucketName string) error {
 	return err
 }
 
-func (store *BoltMovieStore) GetMovie(name string) (Movie, error) {
+func (store *BoltMovieStore) GetMovie(id string) (Movie, error) {
 	var movie Movie
 	err := store.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("movies"))
-		v := b.Get([]byte(name))
+		v := b.Get([]byte(id))
 		json.Unmarshal(v, &movie)
 		return nil
 	})
@@ -64,7 +65,7 @@ func (store *BoltMovieStore) GetMovie(name string) (Movie, error) {
 func (store *BoltMovieStore) AddMovie(mov Movie) error {
 	err := store.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("movies"))
-		if v := b.Get([]byte(mov.Title)); v != nil {
+		if v := b.Get([]byte(strconv.Itoa(mov.Ids.Trakt))); v != nil {
 			return nil
 		}
 		encoded, err := json.Marshal(mov)
@@ -72,7 +73,7 @@ func (store *BoltMovieStore) AddMovie(mov Movie) error {
 			return err
 		}
 
-		return b.Put([]byte(mov.Title), encoded)
+		return b.Put([]byte(strconv.Itoa(mov.Ids.Trakt)), encoded)
 	})
 	return err
 }
@@ -84,15 +85,15 @@ func (store *BoltMovieStore) UpdateMovie(mov Movie) error {
 			return err
 		}
 		b := tx.Bucket([]byte("movies"))
-		return b.Put([]byte(mov.Title), encoded)
+		return b.Put([]byte(strconv.Itoa(mov.Ids.Trakt)), encoded)
 	})
 	return err
 }
 
-func (store *BoltMovieStore) DeleteMovie(name string) error {
+func (store *BoltMovieStore) DeleteMovie(id string) error {
 	err := store.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("movies"))
-		return b.Delete([]byte(name))
+		return b.Delete([]byte(id))
 	})
 	return err
 }
