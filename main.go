@@ -70,13 +70,14 @@ func main() {
 	//Worker stuff
 	log.Println("Starting worker ...")
 	jobs := make(chan dao.Movie, 100)
+	go worker(jobs, store)
 
 	errChan := make(chan error, 10)
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", handlers.HelloHandler)
 	mux.Handle("/movies", handlers.MovieHandler(store))
-	mux.Handle("/refresh", handlers.RefreshHandler(store, movieProvider))
+	mux.Handle("/refresh", handlers.RefreshHandler(store, movieProvider, jobs))
 
 	httpServer := manners.NewServer()
 	httpServer.Addr = *httpAddr

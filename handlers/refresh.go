@@ -11,6 +11,7 @@ import (
 type refreshHandler struct {
 	store         dao.MovieStore
 	movieProvider trakt.MovieProvider
+	jobs          chan dao.Movie
 }
 
 func (h *refreshHandler) saveAllMovies(movies []dao.Movie) error {
@@ -40,6 +41,19 @@ func (h *refreshHandler) refreshMovies(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+func (h *refreshHandler) refreshTorrent(w http.ResponseWriter, r *http.Request) {
+	notFounds, err := h.store.GetAllNotFoundMovies()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	for _, movie := range notFounds {
+		h.jobs <- movie
+	}
+	w.WriteHeader(http.StatusOK)
+	return
+}
+
 func (h *refreshHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	action := r.URL.Query().Get("action")
 	if action == "" && action != "movie" {
@@ -50,12 +64,20 @@ func (h *refreshHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		log.Println("Refreshing movies ...")
 		h.refreshMovies(w, r)
 	}
-	w.WriteHeader(http.StatusMethodNotAllowed)
+	if action == "torrent" {
+		log.Println("Refreshing torrent ...")
+		h.refreshTorrent(w, r)
+	} else {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
 }
 
-func RefreshHandler(store dao.MovieStore, movProvider trakt.MovieProvider) http.Handler {
+func RefreshHandler(store dao.MovieStore, movProvider trakt.MovieProvider, jobs chan dao.Movie) http.Handler {
 	return &refreshHandler{
 		store:         store,
 		movieProvider: movProvider,
+		jobs:          jobs,
 	}
 }
