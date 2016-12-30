@@ -78,6 +78,7 @@ func main() {
 	mux.HandleFunc("/", handlers.HelloHandler)
 	mux.Handle("/movies", handlers.MovieHandler(store))
 	mux.Handle("/refresh", handlers.RefreshHandler(store, movieProvider, jobs))
+	mux.Handle("/rss", handlers.RSSHandler(store, movieProvider))
 
 	httpServer := manners.NewServer()
 	httpServer.Addr = *httpAddr
