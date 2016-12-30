@@ -97,7 +97,7 @@ func (store *BoltMovieStore) DeleteMovie(name string) error {
 	return err
 }
 
-func (store *BoltMovieStore) GetAllMovie() ([]Movie, error) {
+func (store *BoltMovieStore) GetAllMovies() ([]Movie, error) {
 	var movies []Movie
 	err := store.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("movies"))
@@ -112,7 +112,7 @@ func (store *BoltMovieStore) GetAllMovie() ([]Movie, error) {
 	return movies, err
 }
 
-func (store *BoltMovieStore) GetAllNotFoundMovie() ([]Movie, error) {
+func (store *BoltMovieStore) GetAllNotFoundMovies() ([]Movie, error) {
 	var movies []Movie
 	err := store.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("movies"))
