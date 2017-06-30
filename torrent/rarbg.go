@@ -3,8 +3,6 @@ package torrent
 import (
 	"strings"
 
-	"log"
-
 	torrentapi "github.com/qopher/go-torrentapi"
 )
 
@@ -17,7 +15,6 @@ func filterMovies(torrents torrentapi.TorrentResults) string {
 			moviesextended = append(moviesextended, t)
 		}
 	}
-	log.Println(torrents)
 	var results torrentapi.TorrentResults
 	results = filteraudioQuality("DTS-HD", moviesextended)
 	//log.Printf("For quality %s the number of result if %d", "DTS-HD", len(results))
