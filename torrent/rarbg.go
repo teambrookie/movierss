@@ -70,7 +70,7 @@ func filteraudioQuality(quality string, torrents torrentapi.TorrentResults) torr
 	for _, t := range torrents {
 		var filename = strings.ToLower(t.Download)
 		quality = strings.ToLower(quality)
-		if strings.Contains(filename, quality) {
+		if strings.Contains(filename, quality) && t.Seeders > 0 {
 			movies = append(movies, t)
 		}
 	}
