@@ -16,6 +16,6 @@ install:
   
 after_success:
   - CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o movierss .
-  - docker build -t teambrookie/movierss .
+  - docker build -t teambrookie/movierss:$TRAVIS_BRANCH .
   - docker login -u="$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
   - docker push teambrookie/movierss:$TRAVIS_BRANCH;
