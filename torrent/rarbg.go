@@ -7,6 +7,7 @@ import (
 )
 
 func filterMovies(torrents torrentapi.TorrentResults) string {
+	torrents = exlucde3DMovies(torrents)
 	var moviesextended torrentapi.TorrentResults
 	// Search for extended version
 	for _, t := range torrents {
@@ -62,6 +63,17 @@ func filterMovies(torrents torrentapi.TorrentResults) string {
 
 }
 
+func exlucde3DMovies(torrents torrentapi.TorrentResults) torrentapi.TorrentResults {
+	var movies torrentapi.TorrentResults
+	for _, t := range torrents {
+		var filename = strings.ToLower(t.Download)
+		if !strings.Contains(filename, "3d") {
+			movies = append(movies, t)
+		}
+	}
+	return movies
+}
+
 func filteraudioQuality(quality string, torrents torrentapi.TorrentResults) torrentapi.TorrentResults {
 	var movies torrentapi.TorrentResults
 	for _, t := range torrents {
@@ -74,7 +86,8 @@ func filteraudioQuality(quality string, torrents torrentapi.TorrentResults) torr
 	return movies
 }
 
-func Search(movieIMBDID, quality string) (string, error) {
+//Search function search a movie on rarbg using IMBD id
+func Search(movieIMBDID string) (string, error) {
 	api, err := torrentapi.Init()
 	if err != nil {
 		return "", err
