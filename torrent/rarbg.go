@@ -7,6 +7,7 @@ import (
 )
 
 func filterMovies(torrents torrentapi.TorrentResults) string {
+	torrents = exlucde3DMovies(torrents)
 	var moviesextended torrentapi.TorrentResults
 	// Search for extended version
 	for _, t := range torrents {
@@ -60,6 +61,17 @@ func filterMovies(torrents torrentapi.TorrentResults) string {
 
 	return ""
 
+}
+
+func exlucde3DMovies(torrents torrentapi.TorrentResults) torrentapi.TorrentResults {
+	var movies torrentapi.TorrentResults
+	for _, t := range torrents {
+		var filename = strings.ToLower(t.Download)
+		if !strings.Contains(filename, "3d") {
+			movies = append(movies, t)
+		}
+	}
+	return movies
 }
 
 func filteraudioQuality(quality string, torrents torrentapi.TorrentResults) torrentapi.TorrentResults {
