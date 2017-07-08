@@ -22,7 +22,7 @@ func worker(jobs <-chan dao.Movie, store dao.MovieStore) {
 	for movie := range jobs {
 		time.Sleep(2 * time.Second)
 		log.Println("Processing : " + movie.Title)
-		torrentLink, err := torrent.Search(movie.Ids.Imdb, "1080p")
+		torrentLink, err := torrent.Search(movie.Ids.Imdb)
 		log.Println("Result : " + torrentLink)
 		if err != nil {
 			log.Printf("Error processing %s : %s ...\n", movie.Title, err)

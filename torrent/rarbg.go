@@ -86,7 +86,8 @@ func filteraudioQuality(quality string, torrents torrentapi.TorrentResults) torr
 	return movies
 }
 
-func Search(movieIMBDID, quality string) (string, error) {
+//Search function search a movie on rarbg using IMBD id
+func Search(movieIMBDID string) (string, error) {
 	api, err := torrentapi.Init()
 	if err != nil {
 		return "", err
