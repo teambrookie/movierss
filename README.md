@@ -10,7 +10,7 @@ MovieRSS is a small app that let you ask Trakt.tv for your movie watchlist and t
 ### Using it
 
 
-Then they are the /refresh endpoint, it's role is to refresh the unseen episode and to refresh the torrent. They are use like this :
+Then they are the /refresh endpoint, it's role is to refresh the unseen episode and to refresh the torrent. They are use like this:
 ```
 http://yourdomain/refresh?action=movie&slug=xxx
 http://yourdomain/refresh?action=torrent
