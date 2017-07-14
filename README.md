@@ -14,6 +14,8 @@ MovieRSS is a small app that let you ask Trakt.tv for your movie watchlist and t
 docker run -p 8000:8000 -e TRAKT_KEY=xxx teambrookie/movierss
 ```
 
+You can obtained one here: https://trakt.tv/oauth/applications
+
 ## Using it
 
 First of all, what you want is to set when you want the application to refetch the content of your watchlist and when to search for new torrents.
