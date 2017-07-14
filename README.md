@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/teambrookie/movierss.svg?branch=master)](https://travis-ci.org/teambrookie/movierss)
 [![Build Status](https://semaphoreci.com/api/v1/fabienfoerster/movierss/branches/master/shields_badge.svg)](https://semaphoreci.com/fabienfoerster/movierss)
+[![wercker status](https://app.wercker.com/status/10f00dc08474fea4bb549a53fd3e47e7/s/master "wercker status")](https://app.wercker.com/project/byKey/10f00dc08474fea4bb549a53fd3e47e7)
 
 ## Description
 
