@@ -8,18 +8,31 @@
 
 MovieRSS is a small app that let you ask Trakt.tv for your movie watchlist and then find the corresponding torrent using RARBG and expose them as an RSS feed.
 
-### Using it
+## Installation
 
-
-Then they are the /refresh endpoint, it's role is to refresh the unseen episode and to refresh the torrent. They are use like this:
 ```
-http://yourdomain/refresh?action=movie&slug=xxx
-http://yourdomain/refresh?action=torrent
+docker run -p 8000:8000 -e TRAKT_KEY=xxx teambrookie/movierss
+```
+
+## Using it
+
+First of all, what you want is to set when you want the application to refetch the content of your watchlist and when to search for new torrents.
+
+Personally I use IFTTT with a cron job.
+
+First I call the endpoint responsable for refetching the content of the watchlist
+```
+http://localhost/refresh?action=movie&slug=trakt_username
+```
+
+Then I set a cron job for searching the corresponding torrent
+```
+http://localhost/refresh?action=torrent
 ```
 
 And finally what really interest us is the /rss endpoint
 ```
-http://yourdomain/rss?slug=xxx
+http://localhost/rss?slug=xxx
 ```
 
-docker run -p 8000:8000 -e TRAKT_KEY=xxx movierss
+
