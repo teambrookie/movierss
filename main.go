@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log"
@@ -11,7 +12,6 @@ import (
 
 	"net/http"
 
-	"github.com/braintree/manners"
 	"github.com/teambrookie/movierss/dao"
 	"github.com/teambrookie/movierss/handlers"
 	"github.com/teambrookie/movierss/torrent"
@@ -80,7 +80,7 @@ func main() {
 	mux.Handle("/refresh", handlers.RefreshHandler(store, movieProvider, jobs))
 	mux.Handle("/rss", handlers.RSSHandler(store, movieProvider))
 
-	httpServer := manners.NewServer()
+	httpServer := http.Server{}
 	httpServer.Addr = *httpAddr
 	httpServer.Handler = handlers.LoggingHandler(mux)
 
@@ -99,7 +99,7 @@ func main() {
 			}
 		case s := <-signalChan:
 			log.Println(fmt.Sprintf("Captured %v. Exiting...", s))
-			httpServer.BlockingClose()
+			httpServer.Shutdown(context.Background())
 			os.Exit(0)
 		}
 	}
