@@ -18,9 +18,11 @@ import (
 	"github.com/teambrookie/movierss/trakt"
 )
 
+const apiRateLimit = 2
+
 func worker(jobs <-chan dao.Movie, store dao.MovieStore) {
 	for movie := range jobs {
-		time.Sleep(2 * time.Second)
+		time.Sleep(apiRateLimit * time.Second)
 		log.Println("Processing : " + movie.Title)
 		torrentLink, err := torrent.Search(movie.Ids.Imdb)
 		log.Println("Result : " + torrentLink)
