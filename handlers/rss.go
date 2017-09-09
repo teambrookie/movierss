@@ -36,6 +36,7 @@ func (h *rssHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	for _, mov := range movies {
 		movie, err := h.store.GetMovie(strconv.Itoa(mov.Ids.Trakt))
+		h.store.UpdateMovie(movie)
 		if movie.MagnetLink == "" || err != nil {
 			continue
 		}
