@@ -7,7 +7,8 @@ import (
 )
 
 func filterMovies(torrents torrentapi.TorrentResults) string {
-	torrents = exlucde3DMovies(torrents)
+	torrents = exclude3DMovies(torrents)
+	torrents = excludeNoSeeder(torrents)
 	var moviesextended torrentapi.TorrentResults
 	// Search for extended version
 	for _, t := range torrents {
@@ -17,11 +18,7 @@ func filterMovies(torrents torrentapi.TorrentResults) string {
 		}
 	}
 	var results torrentapi.TorrentResults
-	results = filteraudioQuality("DTS-HD", moviesextended)
-	//log.Printf("For quality %s the number of result if %d", "DTS-HD", len(results))
-	if len(results) > 0 {
-		return results[0].Download
-	}
+	// Search on the movie that have the EXTENDED in the name
 	results = filteraudioQuality("DTS-HD.MA.7.1", moviesextended)
 	//log.Printf("For quality %s the number of result if %d", "DTS-HD.MA.7.1", len(results))
 	if len(results) > 0 {
@@ -32,17 +29,19 @@ func filterMovies(torrents torrentapi.TorrentResults) string {
 	if len(results) > 0 {
 		return results[0].Download
 	}
+	results = filteraudioQuality("DTS-HD", moviesextended)
+	//log.Printf("For quality %s the number of result if %d", "DTS-HD", len(results))
+	if len(results) > 0 {
+		return results[0].Download
+	}
+
 	results = filteraudioQuality("DTS", moviesextended)
 	//log.Printf("For quality %s the number of result if %d", "DTS", len(results))
 	if len(results) > 0 {
 		return results[0].Download
 	}
 
-	results = filteraudioQuality("DTS-HD", torrents)
-	//log.Printf("For quality %s the number of result if %d", "DTS-HD", len(results))
-	if len(results) > 0 {
-		return results[0].Download
-	}
+	// Search in everything else if not already find
 	results = filteraudioQuality("DTS-HD.MA.7.1", torrents)
 	//log.Printf("For quality %s the number of result if %d", "DTS-HD.MA.7.1", len(results))
 	if len(results) > 0 {
@@ -53,6 +52,12 @@ func filterMovies(torrents torrentapi.TorrentResults) string {
 	if len(results) > 0 {
 		return results[0].Download
 	}
+	results = filteraudioQuality("DTS-HD", torrents)
+	//log.Printf("For quality %s the number of result if %d", "DTS-HD", len(results))
+	if len(results) > 0 {
+		return results[0].Download
+	}
+
 	results = filteraudioQuality("DTS", torrents)
 	//log.Printf("For quality %s the number of result if %d", "DTS", len(results))
 	if len(results) > 0 {
@@ -63,11 +68,21 @@ func filterMovies(torrents torrentapi.TorrentResults) string {
 
 }
 
-func exlucde3DMovies(torrents torrentapi.TorrentResults) torrentapi.TorrentResults {
+func exclude3DMovies(torrents torrentapi.TorrentResults) torrentapi.TorrentResults {
 	var movies torrentapi.TorrentResults
 	for _, t := range torrents {
 		var filename = strings.ToLower(t.Download)
 		if !strings.Contains(filename, "3d") {
+			movies = append(movies, t)
+		}
+	}
+	return movies
+}
+
+func excludeNoSeeder(torrents torrentapi.TorrentResults) torrentapi.TorrentResults {
+	var movies torrentapi.TorrentResults
+	for _, t := range torrents {
+		if t.Seeders > 0 {
 			movies = append(movies, t)
 		}
 	}
@@ -79,14 +94,15 @@ func filteraudioQuality(quality string, torrents torrentapi.TorrentResults) torr
 	for _, t := range torrents {
 		var filename = strings.ToLower(t.Download)
 		quality = strings.ToLower(quality)
-		if strings.Contains(filename, quality) && t.Seeders > 0 {
+		if strings.Contains(filename, quality) {
 			movies = append(movies, t)
 		}
 	}
 	return movies
 }
 
-//Search function search a movie on rarbg using IMBD id
+//Search is a function that search a movie on rarbg using an IMDB id
+//by default it search the movie in category 44 also know as Serie/720p
 func Search(movieIMBDID string) (string, error) {
 	api, err := torrentapi.Init()
 	if err != nil {
