@@ -8,15 +8,17 @@ import (
 	"github.com/boltdb/bolt"
 )
 
+type Ids struct {
+	Trakt int    `json:"trakt"`
+	Slug  string `json:"slug"`
+	Imdb  string `json:"imdb"`
+	Tmdb  int    `json:"tmdb"`
+}
+
 type Movie struct {
-	Title string `json:"title"`
-	Year  int    `json:"year"`
-	Ids   struct {
-		Trakt int    `json:"trakt"`
-		Slug  string `json:"slug"`
-		Imdb  string `json:"imdb"`
-		Tmdb  int    `json:"tmdb"`
-	} `json:"ids"`
+	Title        string    `json:"title"`
+	Year         int       `json:"year"`
+	Ids          Ids       `json:"ids"`
 	MagnetLink   string    `json:"magnet_link"`
 	LastModified time.Time `json:"last_modified"`
 	LastAccess   time.Time `json:"last_access"`
