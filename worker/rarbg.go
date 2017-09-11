@@ -13,9 +13,10 @@ const apiRateLimit = 2 * time.Second
 func Rarbg(in <-chan dao.Movie, out chan<- dao.Movie) {
 	for movie := range in {
 		time.Sleep(apiRateLimit)
-		log.Println("Processing : " + movie.Title)
 		torrentLink, err := torrent.Search(movie.Ids.Imdb)
-		log.Println("Result : " + torrentLink)
+		if torrentLink == "" {
+			log.Printf("%s NOT FOUND", movie.Title)
+		}
 		if err != nil {
 			log.Printf("Error processing %s : %s ...\n", movie.Title, err)
 			continue
