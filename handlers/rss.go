@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -40,10 +41,16 @@ func (h *rssHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if movie.MagnetLink == "" || err != nil {
 			continue
 		}
+
+		description := fmt.Sprintf(`
+			<p>Title : %s</p>
+			<p>Magnet : <a href="%s">%s</a></p>
+			<p>LastModified : %s</p>
+			`, mov.Title, mov.MagnetLink, mov.MagnetLink, mov.LastModified)
 		item := &feeds.Item{
 			Title:       movie.Title,
 			Link:        &feeds.Link{Href: movie.MagnetLink},
-			Description: movie.MagnetLink,
+			Description: description,
 			Created:     movie.LastModified,
 		}
 		feed.Add(item)
