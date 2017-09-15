@@ -46,7 +46,7 @@ func (h *rssHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			<p>Title : %s</p>
 			<p>Magnet : <a href="%s">%s</a></p>
 			<p>LastModified : %s</p>
-			`, mov.Title, mov.MagnetLink, mov.MagnetLink, mov.LastModified)
+			`, movie.Title, movie.MagnetLink, movie.MagnetLink, movie.LastModified)
 		item := &feeds.Item{
 			Title:       movie.Title,
 			Link:        &feeds.Link{Href: movie.MagnetLink},
