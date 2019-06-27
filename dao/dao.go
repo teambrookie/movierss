@@ -109,12 +109,12 @@ func (store *BoltMovieStore) GetAllMovies() ([]Movie, error) {
 	var movies []Movie
 	err := store.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("movies"))
-		b.ForEach(func(k, v []byte) error {
+		c := b.Cursor()
+		for k, v := c.First(); k != nil; k, v = c.Next() {
 			var movie Movie
 			json.Unmarshal(v, &movie)
 			movies = append(movies, movie)
-			return nil
-		})
+		}
 		return nil
 	})
 	return movies, err
@@ -124,15 +124,14 @@ func (store *BoltMovieStore) GetAllFoundMovies() ([]Movie, error) {
 	var movies []Movie
 	err := store.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("movies"))
-		b.ForEach(func(k, v []byte) error {
+		c := b.Cursor()
+		for k, v := c.First(); k != nil; k, v = c.Next() {
 			var movie Movie
 			json.Unmarshal(v, &movie)
 			if movie.MagnetLink != "" {
 				movies = append(movies, movie)
 			}
-
-			return nil
-		})
+		}
 		return nil
 	})
 	return movies, err
@@ -142,15 +141,14 @@ func (store *BoltMovieStore) GetAllNotFoundMovies() ([]Movie, error) {
 	var movies []Movie
 	err := store.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("movies"))
-		b.ForEach(func(k, v []byte) error {
+		c := b.Cursor()
+		for k, v := c.First(); k != nil; k, v = c.Next() {
 			var movie Movie
 			json.Unmarshal(v, &movie)
 			if movie.MagnetLink == "" {
 				movies = append(movies, movie)
 			}
-
-			return nil
-		})
+		}
 		return nil
 	})
 	return movies, err
