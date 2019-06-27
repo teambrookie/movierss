@@ -101,15 +101,28 @@ func filteraudioQuality(quality string, torrents torrentapi.TorrentResults) torr
 	return movies
 }
 
+func bestTorrent(torrents torrentapi.TorrentResults) torrentapi.TorrentResult {
+	bt := torrentapi.TorrentResult{}
+	for _, t := range torrents {
+		if (bt == torrentapi.TorrentResult{}) {
+			bt = t
+			continue
+		}
+		if (t.Seeders / (1 + t.Leechers)) > (bt.Seeders / (1 + bt.Leechers)) {
+			bt = t
+		}
+	}
+	return bt
+}
+
 //Search is a function that search a movie on rarbg using an IMDB id
 //by default it search the movie in category 44 also know as Serie/720p
-func Search(movieIMBDID string) (string, error) {
+func Search(movieIMBDID string, config Config) (string, error) {
 	api, err := torrentapi.New("Movierss")
 	if err != nil {
 		return "", err
 	}
 	api.Format("json_extended")
-	api.Category(44)
 	api.SearchIMDb(movieIMBDID)
 	results, err := api.Search()
 	if err != nil {
@@ -119,5 +132,7 @@ func Search(movieIMBDID string) (string, error) {
 	if len(results) == 0 {
 		return "", nil
 	}
-	return filterMovies(results), nil
+	torrents := excludeNoSeeder(results)
+	torrents = Filter(config.Categories, torrents)
+	return bestTorrent(torrents).Download, nil
 }

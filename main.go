@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -13,9 +15,37 @@ import (
 
 	"github.com/teambrookie/movierss/dao"
 	"github.com/teambrookie/movierss/handlers"
+	"github.com/teambrookie/movierss/torrent"
 	"github.com/teambrookie/movierss/trakt"
 	"github.com/teambrookie/movierss/worker"
 )
+
+func loadConfig() (torrent.Config, error) {
+	configURL := os.Getenv("SHOWRSS_CONFIGURL")
+	config := torrent.Config{}
+	if configURL != "" {
+		resp, err := http.Get(configURL)
+		if err != nil {
+			return torrent.Config{}, err
+		}
+		err = json.NewDecoder(resp.Body).Decode(&config)
+		if err != nil {
+			return torrent.Config{}, err
+		}
+		return config, nil
+	}
+	configPath := os.Getenv("SHOWRSS_CONFIGPATH")
+	if configPath == "" {
+		configPath = "./config.json"
+	}
+	data, _ := os.Open(configPath)
+	err := json.NewDecoder(bufio.NewReader(data)).Decode(&config)
+	if err != nil {
+		return torrent.Config{}, err
+	}
+	return config, nil
+
+}
 
 func main() {
 	var httpAddr = flag.String("http", "0.0.0.0:8000", "HTTP service address")
@@ -25,6 +55,11 @@ func main() {
 	traktAPIKey := os.Getenv("TRAKT_KEY")
 	if traktAPIKey == "" {
 		log.Fatalln("TRAKT_KEY must be set in env")
+	}
+
+	config, err := loadConfig()
+	if err != nil {
+		log.Fatalf("Error loading the config: %s", err)
 	}
 
 	movieProvider := trakt.Trakt{APIKey: traktAPIKey}
@@ -51,7 +86,7 @@ func main() {
 
 	fmt.Println("Starting workers ...")
 	go worker.DB(out, store)
-	go worker.Rarbg(in, out)
+	go worker.Rarbg(in, out, config)
 	go worker.Cleanup(in, store)
 
 	errChan := make(chan error, 10)

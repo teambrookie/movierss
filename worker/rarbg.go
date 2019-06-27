@@ -10,10 +10,10 @@ import (
 
 const apiRateLimit = 2 * time.Second
 
-func Rarbg(in <-chan dao.Movie, out chan<- dao.Movie) {
+func Rarbg(in <-chan dao.Movie, out chan<- dao.Movie, config torrent.Config) {
 	for movie := range in {
 		time.Sleep(apiRateLimit)
-		torrentLink, err := torrent.Search(movie.Ids.Imdb)
+		torrentLink, err := torrent.Search(movie.Ids.Imdb, config)
 		if torrentLink == "" {
 			log.Printf("%s NOT FOUND", movie.Title)
 		}

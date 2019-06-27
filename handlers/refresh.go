@@ -18,7 +18,6 @@ func (h *refreshHandler) saveAllMovies(movies []dao.Movie) error {
 	for _, mov := range movies {
 		err := h.store.AddMovie(mov)
 		if err != nil {
-			log.Println("caca")
 			return err
 		}
 	}
