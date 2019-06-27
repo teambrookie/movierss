@@ -104,13 +104,13 @@ func filteraudioQuality(quality string, torrents torrentapi.TorrentResults) torr
 //Search is a function that search a movie on rarbg using an IMDB id
 //by default it search the movie in category 44 also know as Serie/720p
 func Search(movieIMBDID string) (string, error) {
-	api, err := torrentapi.Init()
+	api, err := torrentapi.New("Movierss")
 	if err != nil {
 		return "", err
 	}
 	api.Format("json_extended")
 	api.Category(44)
-	api.SearchImDB(movieIMBDID)
+	api.SearchIMDb(movieIMBDID)
 	results, err := api.Search()
 	if err != nil {
 		return "", err
