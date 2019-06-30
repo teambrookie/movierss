@@ -5,28 +5,17 @@
             "optionnal": true,
             "keywords": ["3D"]
         },
-        {   "name": "Video Quality",
-            "type" : "include",
-            "optionnal": false,
-            "keywords": ["1080p","720p","4K"]
-        },
-        {
-            "name":"Audio Quality",
-            "type":"include",
-            "optionnal":false,
-            "keywords": ["DTS-HD.MA.7.1","TrueHD.7.1Atmos","DTS-HD","DTS"]
-        },
         {
             "name":"HDR",
             "type":"include",
             "optionnal":true,
             "keywords":["HDR"]
+        },
+        {   "name": "Video Quality",
+            "type" : "include",
+            "optionnal": false,
+            "keywords": ["1080p","720p","4K"]
         }
-    ]
-
-
-    
-
-
-       
-}D
+        
+    ]  
+}
